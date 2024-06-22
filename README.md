@@ -117,11 +117,11 @@ So everything is in one box.
 
 * **To start IndexFS server**
 
-        $sbin/start-idxfs.sh
+        sbin/start-idxfs.sh
 
 * **To start IndexFS clients (processes) and run tests**
 
-        $sbin/tree-test.sh
+        sbin/tree-test.sh
 
 * **To mount IndexFS clients and run mdtest**
 
@@ -131,7 +131,7 @@ So everything is in one box.
 * **To stop IndexFS server**
 
         sudo umount /tmp/indexfs/fuse-mnt
-        $sbin/stop-idxfs.sh
+        sbin/stop-idxfs.sh
 
 In the above scripts, IndexFS server will be started as a daemon
 running in the background. It's pid will be remembered at
