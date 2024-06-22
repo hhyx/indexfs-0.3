@@ -4,9 +4,9 @@
 # Uncomment exactly one of the lines labelled (A), (B), and (C) below
 # to switch between compilation modes.
 #
-OPT="-O2 -DNDEBUG"       # (A) Production use (optimized mode)
-# OPT="-g2 -Wall"        # (B) Debug mode, w/ full line-level debugging symbols
-# OPT="-g2 -DNDEBUG"     # (C) Profiling mode: opt, but w/debugging symbols
+# OPT="-O2 -DNDEBUG"              # (A) Production use (optimized mode)
+# OPT="-g2 -Wall"                 # (B) Debug mode, w/ full line-level debugging symbols
+OPT="-g2 -DNDEBUG -std=c++14"     # (C) Profiling mode: opt, but w/debugging symbols
 #-----------------------------------------------------------------
 #
 #-----------------------------------------------------------------

@@ -45,41 +45,41 @@ and install these required IndexFS dependencies.
 
 ##### INSTALL SYSTEM PACKAGES
 
-* **Ubuntu**
-
-        apt-get install gcc g++ make flex bison
-        apt-get install autoconf automake libtool pkg-config
-        apt-get install zlib1g-dev libsnappy-dev
-        apt-get install libboost-all-dev libevent-dev libssl-dev
-        apt-get install pdsh libfuse-dev libopenmpi-dev
-
-* **Opensuse**
-
-        zypper install gcc gcc-c++ make flex bison
-        zypper install autoconf automake libtool pkg-config
-        zypper install zlib-devel snappy-devel
-        zypper install boost-devel libevent-devel libopenssl-devel
-        zypper install psmisc pdsh fuse-devel openmpi openmpi-devel
+        sudo apt-get install gcc g++ make flex bison
+        sudo apt-get install autoconf automake libtool pkg-config
+        sudo apt-get install zlib1g-dev libsnappy-dev
+        sudo apt-get install libboost-all-dev libevent-dev libssl-dev
+        sudo apt-get install pdsh libfuse-dev libopenmpi-dev
 
 ##### Build & Install Depends
 
-Use GNU standard building process to build and install `gflags`,
-`glog`, and `thrift`, in that order.
 
-* **To build gflags and glog**:
+* **Install gflags and glog**:
 
-        ./configure && make && sudo make install
+        sudo apt install libgflags-dev libgoogle-glog-dev   
 
-NB: thrift's automake scripts have several known bugs, which will
-cause both make and make install to fail. However, those errors are
-not vital in terms of building and installation. Just ignore them
-and life is still good.
+* **To build thrift 0.10.0**:
 
-* **To build thrift**:
+        wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz
+        tar -xzf openssl-1.0.2u.tar.gz
+        cd openssl-1.0.2u/
+        ./config --prefix=/usr/local/openssl-1.0.2 --openssldir=/usr/local/openssl-1.0.2 shared
+        make -j
+        sudo checkinstall --pkgname=openssl-1.0.2 --pkgversion=1.0.2u --backup=no --deldoc=yes --fstrans=no --default
+        cd ..
+        git clone https://github.com/apache/thrift.git
+        cd thrift
+        git checkout 0.10.0
+        ./bootstrap.sh
+        export LDFLAGS="-L/usr/local/openssl-1.0.2/lib"
+        export CPPFLAGS="-I/usr/local/openssl-1.0.2/include"
+        export LD_LIBRARY_PATH="/usr/local/openssl-1.0.2/lib:$LD_LIBRARY_PATH"
+        export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+        ./configure --with-openssl=/usr/local/openssl-1.0.2 --without-qt4 --without-qt5 --without-c_glib --without-csharp --without-java --without-erlang --without-nodejs --without-lua --without-python --without-perl --without-php --without-php_extension --without-ruby --without-haskell --without-go --without-haxe --without-d --enable-tests=no --enable-tutorial=no
+        make -j
+        sudo checkinstall --pkgname=thrift-0.10.0 --pkgversion=0.10.0 --backup=no --deldoc=yes --fstrans=no --default
+        cd ..
 
-        ./configure || make || sudo make install || exit 0
-
-BUILD INDEXFS FROM SOURCE
 -------------------------
 
 ##### Build IndexFS
@@ -90,6 +90,14 @@ automatically for you.
 
 * **To build IndexFS**:
   
+        git clone https://github.com/hhyx/indexfs-0.3.git
+        cd indexfs-0.3
+        export LDFLAGS="-L/usr/local/openssl-1.0.2/lib"
+        export CPPFLAGS="-I/usr/local/openssl-1.0.2/include"
+        export LD_LIBRARY_PATH="/usr/local/openssl-1.0.2/lib:$LD_LIBRARY_PATH"
+        export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+        export LDFLAGS="-L/usr/local/lib"
+        export CPPFLAGS="-I/usr/local/include"
         ./bootstrap.sh
 
 NB: you don't have to install IndexFS into your system. Our scripts
@@ -107,17 +115,23 @@ By being _standalone_, we mean running one single IndexFS (metadata)
 server instance and multiple client processes at one single machine.
 So everything is in one box.
 
-* **To start IndexFS server**:
+* **To start IndexFS server**
 
-        $INDEXFS_HOME/sbin/start-idxfs.sh
+        $sbin/start-idxfs.sh
 
-* **To start IndexFS clients (processes) and run tests**:
+* **To start IndexFS clients (processes) and run tests**
 
-        $INDEXFS_HOME/sbin/tree-test.sh
+        $sbin/tree-test.sh
 
-* **To stop IndexFS server**:
+* **To mount IndexFS clients and run mdtest**
 
-        $INDEXFS_HOME/sbin/stop-idxfs.sh
+        sbin/mount-fuse.sh
+        ../ior/src/mdtest -d /tmp/indexfs/fuse-mnt/mdtest -n 1000
+
+* **To stop IndexFS server**
+
+        sudo umount /tmp/indexfs/fuse-mnt
+        $sbin/stop-idxfs.sh
 
 In the above scripts, IndexFS server will be started as a daemon
 running in the background. It's pid will be remembered at
@@ -127,3 +141,25 @@ A simple MPI-based test will be performed against IndexFS in terms of
 its metadata path. The test will fork 2 client processes to
 collectively create and stat 1600 files under 1 single shared
 directory. This test is expected to conclude in less than 1 second.
+
+INDEXFS IN DISTRIBUTED MODE
+--------------------------
+
+Assuming you have completed the interoperability of the machines, for example use 10.10.1.3 and 10.10.1.2.
+
+* **Deploy indexfs to a folder with the same path on each machine according to the above process**
+
+* **Change IP at etc/indexfs-distributed/server_list**: Change to the IP addresses of each machine, with one line for each machine. The port number written here is meaningless, and the port number written in the etc/indexfs-standalone/server_list file is used for startup.
+
+* **To start IndexFS server**
+
+        sbin/start-all.sh
+
+* **To run mdtest**
+
+        ssh 10.10.1.2 "mpirun -np 10 /users/penglb3/sdb/ior/src/mdtest -d /tmp/indexfs/fuse-mnt/mdtest -n 1000"
+        ssh 10.10.1.3 "mpirun -np 10 /users/penglb3/sdb/ior/src/mdtest -d /tmp/indexfs/fuse-mnt/mdtest -n 1000"
+
+* **To stop IndexFS server**
+
+        sbin/stop-all.sh

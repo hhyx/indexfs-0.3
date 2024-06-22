@@ -56,8 +56,25 @@ for srv_node in \
 do
   INDEXFS_ID=$((${INDEXFS_ID:-"-1"} + 1))
   INDEXFS_RUN=$INDEXFS_ROOT/run/server-$INDEXFS_ID
-  $SSH $srv_node "env INDEXFS_ID=$INDEXFS_ID INDEXFS_CONF_DIR=$INDEXFS_CONF_DIR \
-    INDEXFS_RUN=$INDEXFS_RUN $INDEXFS_HOME/sbin/start-idxfs.sh" || report_error $srv_node
+  $SSH $srv_node "env 
+    export LDFLAGS="-L/usr/local/openssl-1.0.2/lib"
+    export CPPFLAGS="-I/usr/local/openssl-1.0.2/include"
+    export LD_LIBRARY_PATH="/usr/local/openssl-1.0.2/lib:$LD_LIBRARY_PATH"
+    export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+    export LDFLAGS="-L/usr/local/lib"
+    export CPPFLAGS="-I/usr/local/include"
+    INDEXFS_ID=$INDEXFS_ID 
+    INDEXFS_CONF_DIR=$INDEXFS_CONF_DIR
+    INDEXFS_RUN=$INDEXFS_RUN 
+    $INDEXFS_HOME/sbin/start-idxfs.sh" || report_error $srv_node
+  $SSH $srv_node "env 
+    export LDFLAGS="-L/usr/local/openssl-1.0.2/lib"
+    export CPPFLAGS="-I/usr/local/openssl-1.0.2/include"
+    export LD_LIBRARY_PATH="/usr/local/openssl-1.0.2/lib:$LD_LIBRARY_PATH"
+    export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+    export LDFLAGS="-L/usr/local/lib"
+    export CPPFLAGS="-I/usr/local/include"
+    bash $INDEXFS_HOME/sbin/mount-fuse.sh" || report_error $srv_node
 done
 
 exit 0

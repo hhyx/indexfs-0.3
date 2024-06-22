@@ -200,6 +200,14 @@ int ReleaseDir(const char *path, struct fuse_file_info *file) {
   return 0; // Do Nothing
 }
 
+static
+int Rename(const char *oldpath, const char *newpath) {
+  std::string old_p = oldpath;
+  std::string new_p = newpath;
+  Status s = GetClient()->Rename(old_p, new_p);
+  return LogErrorAndReturn(s, "rename", oldpath);
+}
+
 //////////////////////////////////////////////////////////////////////////////////
 // OPERATION MAPPING
 //
@@ -224,6 +232,7 @@ void InitOpMapping(struct fuse_operations *opers) {
   opers->readdir     =     ReadDir;
   opers->fsyncdir    =     FsyncDir;
   opers->releasedir  =     ReleaseDir;
+  opers->rename      =     Rename;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,28 @@
+# 忽略编译输出
+*.o
+*.a
+*.so
+*.exe
+autom4te.cache/
+config*
+configure*
+
+# 忽略日志文件
+*.log
+
+# 忽略操作系统文件
+.DS_Store
+Thumbs.db
+
+# 忽略 IDE/编辑器配置文件
+.vscode/
+.idea/
+
+# 忽略依赖文件
+node_modules/
+vendor/
+build/
+
+# 忽略临时文件
+*.tmp
+*.swp

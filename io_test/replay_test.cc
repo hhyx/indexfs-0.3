@@ -354,7 +354,7 @@ class ReplayTest: public IOTask {
     size_t root_size = path.size();
 
     OpFactory f = GetOpFactory(op);
-    while ((log_file >> line) != NULL) {
+    while (!(log_file >> line)) {
       path.resize(root_size);
       if (line.at(0) != '/') {
         path.append("/");
@@ -385,7 +385,7 @@ class ReplayTest: public IOTask {
           continue; // skip this log
         }
         for (int i = 0; i < FLAGS_win_size; i++) {
-          if (std::getline(*replay_logs_[idx], line) == NULL) {
+          if (!std::getline(*replay_logs_[idx], line)) {
             break; // reach end-of-file
           }
           line.append("\t"); // Using a tailing sentinel element

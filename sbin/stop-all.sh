@@ -37,8 +37,12 @@ for srv_node in \
 do
   INDEXFS_ID=$((${INDEXFS_ID:-"-1"} + 1))
   INDEXFS_RUN=$INDEXFS_ROOT/run/server-$INDEXFS_ID
-  $SSH $srv_node "env INDEXFS_ID=$INDEXFS_ID INDEXFS_CONF_DIR=$INDEXFS_CONF_DIR \
-    INDEXFS_RUN=$INDEXFS_RUN $INDEXFS_HOME/sbin/stop-idxfs.sh" || report_error $srv_node
+  $SSH $srv_node "env 
+    INDEXFS_ID=$INDEXFS_ID 
+    INDEXFS_CONF_DIR=$INDEXFS_CONF_DIR
+    INDEXFS_RUN=$INDEXFS_RUN 
+    $INDEXFS_HOME/sbin/stop-idxfs.sh" || report_error $srv_node
+  $SSH $srv_node "sudo umount /tmp/indexfs/fuse-mnt" || report_error $srv_node
 done
 
 exit 0
