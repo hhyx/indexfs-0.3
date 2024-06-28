@@ -10,7 +10,7 @@
 # Use this script to shutdown an indexfs server cluster over the network.
 # Root privilege is neither required nor recommended to run this scripts.
 #
-
+set -x
 me=$0
 INDEXFS_HOME=$(cd -P -- `dirname $me`/.. && pwd -P)
 INDEXFS_ROOT=${INDEXFS_ROOT:-"/tmp/indexfs"}
@@ -37,12 +37,11 @@ for srv_node in \
 do
   INDEXFS_ID=$((${INDEXFS_ID:-"-1"} + 1))
   INDEXFS_RUN=$INDEXFS_ROOT/run/server-$INDEXFS_ID
-  $SSH $srv_node "env 
-    INDEXFS_ID=$INDEXFS_ID 
-    INDEXFS_CONF_DIR=$INDEXFS_CONF_DIR
-    INDEXFS_RUN=$INDEXFS_RUN 
+  $SSH $srv_node "env \
+    INDEXFS_ID=$INDEXFS_ID \
+    INDEXFS_CONF_DIR=$INDEXFS_CONF_DIR \
+    INDEXFS_RUN=$INDEXFS_RUN \
     $INDEXFS_HOME/sbin/stop-idxfs.sh" || report_error $srv_node
-  $SSH $srv_node "sudo umount /tmp/indexfs/fuse-mnt" || report_error $srv_node
 done
 
 exit 0

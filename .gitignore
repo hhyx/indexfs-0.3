@@ -4,6 +4,8 @@
 *.so
 *.exe
 autom4te.cache/
+config.h.in~
+configure~
 
 # 忽略日志文件
 *.log
