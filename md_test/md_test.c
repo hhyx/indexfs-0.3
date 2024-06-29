@@ -1724,7 +1724,7 @@ void file_test(int iteration, int ntasks, char *path) {
         /* create files */    
         create_remove_items(0, 0, 1, 0, temp_path, 0);
 
-        fprintf(stderr, "proc %d -- create phase completed\n", rank);
+        // fprintf(stderr, "proc %d -- create phase completed\n", rank);
     }
 
     if (barriers) {
@@ -1756,7 +1756,7 @@ void file_test(int iteration, int ntasks, char *path) {
     	    mdtest_stat(0,0,temp_path);
 		    }
 
-        fprintf(stderr, "proc %d -- stat phase completed\n", rank);
+        // fprintf(stderr, "proc %d -- stat phase completed\n", rank);
     }
     
     if (barriers) {
@@ -1816,7 +1816,7 @@ void file_test(int iteration, int ntasks, char *path) {
         } else {
         	create_remove_items(0, 0, 0, 0, temp_path, 0);
         }
-        fprintf(stderr, "proc %d -- remove phase completed\n", rank);
+        // fprintf(stderr, "proc %d -- remove phase completed\n", rank);
     }
 
     if (barriers) {

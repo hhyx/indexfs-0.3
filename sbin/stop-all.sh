@@ -10,7 +10,7 @@
 # Use this script to shutdown an indexfs server cluster over the network.
 # Root privilege is neither required nor recommended to run this scripts.
 #
-set -x
+
 me=$0
 INDEXFS_HOME=$(cd -P -- `dirname $me`/.. && pwd -P)
 INDEXFS_ROOT=${INDEXFS_ROOT:-"/tmp/indexfs"}

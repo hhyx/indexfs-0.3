@@ -23,7 +23,7 @@
 # and can access that with the same file system path. It is recommended to place
 # the indexfs distribution on a shared file system, such as NFS.
 #
-set -x
+
 me=$0
 INDEXFS_HOME=$(cd -P -- `dirname $me`/.. && pwd -P)
 INDEXFS_ROOT=${INDEXFS_ROOT:-"/tmp/indexfs"}
