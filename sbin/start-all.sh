@@ -67,8 +67,4 @@ do
     $INDEXFS_HOME/sbin/start-idxfs.sh" || report_error $srv_node
 done
 
-mkdir /tmp/indexfs/conf
-cp etc/indexfs-distributed/* /tmp/indexfs/conf/
-cp build/md_test/mdtest_nobk /tmp/indexfs/conf/
-
 exit 0

@@ -141,11 +141,9 @@ INDEXFS IN DISTRIBUTED MODE
 
 Assuming you have completed the interconnection of the machines, for example use noded0(10.10.1.1) and node1(10.10.1.2).
 
-* **Deploy indexfs mds on one machine and run the client on other machines**: You need to deploy indexfs on one machine and complete INSTALL SYSTEM PACKAGES and Build&Install Depends on other machines. You can also deploy indexfs mds to each machine by modifying server_list and configuring the indexfs environment in the same directory on each machine. You need to complete INSTALL SYSTEM PACKAGES, Build&Install Depends and Build IndexFS on the same directory for each machine
+* **Deploy indexfs mds on one machine and run the client on other machines**: You need to deploy indexfs on one machine and complete INSTALL SYSTEM PACKAGES and Build&Install Depends on other machines. 
 
-* **Change IP and configure**: Change IP and port at etc/indexfs-distributed/server_list. Change configure at etc/indexfs-distributed/indexfs_conf. If you deploy indexfs on multiple machines, the configuration file of each machine needs to be modified.
-
-* **Configure shared directories for multiple machines based on indexfs_conf**: The default directory is/tmp/indexfs. Using nfs as an example, configure node0 and node1
+* **Deploy indexfs mds on multi machines and run the client on other machines**: You should modify server_list and configuring the indexfs environment in the same directory on each machine. You need to complete INSTALL SYSTEM PACKAGES, Build&Install Depends and Build IndexFS on the same directory for each machine. Then configure shared directories for multiple machines based on indexfs_conf: The default directory is/tmp/indexfs. Using nfs as an example, configure node0 and node1.
 
         # at node0
         sudo apt install -y nfs-kernel-server nfs-common
@@ -161,13 +159,21 @@ Assuming you have completed the interconnection of the machines, for example use
         ssh node1 'mkdir /tmp/indexfs'
         ssh node1 'sudo mount 10.10.1.1:/tmp/indexfs /tmp/indexfs'
 
+* **Change IP and configure**: Change IP and port at etc/indexfs-distributed/server_list. Change configure at etc/indexfs-distributed/indexfs_conf. If you deploy indexfs on multiple machines, the configuration file of each machine needs to be modified.
+
 * **To start IndexFS server**
 
         sbin/start-all.sh
 
+* **Transfer configuration file**: You need to send indexfs_conf, server_list and mdtest_nobk to the machine running the test. And modify the directory of mdtest below.
+
+        ssh node1 "mkdir /users/penglb3/indexfs_conf/"
+        scp etc/indexfs-distributed/* node1:/users/penglb3/indexfs_conf/
+        scp build/md_test/mdtest_nobk  node1:/users/penglb3/indexfs_conf/
+
 * **To run mdtest**: Reading test file not implemented, skipping with -C -T -r.
 
-        mpirun --host node1:16 -x LDFLAGS="-L/usr/local/openssl-1.0.2/lib" -x CPPFLAGS="-I/usr/local/openssl-1.0.2/include" -x LD_LIBRARY_PATH="/usr/local/openssl-1.0.2/lib:$LD_LIBRARY_PATH" -x IDXFS_CONFIG_FILE=/tmp/indexfs/conf/indexfs_conf -x IDXFS_SERVER_LIST=/tmp/indexfs/conf/server_list /tmp/indexfs/conf/mdtest_nobk -n 1000 -d / -C -T -r
+        mpirun --host node1:16 -x LDFLAGS="-L/usr/local/openssl-1.0.2/lib" -x CPPFLAGS="-I/usr/local/openssl-1.0.2/include" -x LD_LIBRARY_PATH="/usr/local/openssl-1.0.2/lib:$LD_LIBRARY_PATH" -x IDXFS_CONFIG_FILE=/users/penglb3/indexfs_conf/indexfs_conf -x IDXFS_SERVER_LIST=/users/penglb3/indexfs_conf/server_list /users/penglb3/indexfs_conf/mdtest_nobk -n 1000 -d / -C -T -r
 
 * **To stop IndexFS server**
 
