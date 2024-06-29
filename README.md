@@ -45,21 +45,22 @@ and install these required IndexFS dependencies.
 
 ##### INSTALL SYSTEM PACKAGES
 
-        sudo apt-get install gcc g++ make flex bison
-        sudo apt-get install autoconf automake libtool pkg-config
-        sudo apt-get install zlib1g-dev libsnappy-dev
-        sudo apt-get install libboost-all-dev libevent-dev libssl-dev
-        sudo apt-get install pdsh libfuse-dev libopenmpi-dev
+        sudo apt-get install -y gcc g++ make flex bison
+        sudo apt-get install -y autoconf automake libtool pkg-config
+        sudo apt-get install -y zlib1g-dev libsnappy-dev
+        sudo apt-get install -y libboost-all-dev libevent-dev libssl-dev
+        sudo apt-get install -y pdsh libfuse-dev libopenmpi-dev
 
 ##### Build & Install Depends
 
 
 * **Install gflags and glog**:
 
-        sudo apt install libgflags-dev libgoogle-glog-dev   
+        sudo apt install -y libgflags-dev libgoogle-glog-dev   
 
 * **To build thrift 0.10.0**:
 
+        sudo apt install -y checkinstall
         wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz
         tar -xzf openssl-1.0.2u.tar.gz
         cd openssl-1.0.2u/
@@ -74,7 +75,6 @@ and install these required IndexFS dependencies.
         export LDFLAGS="-L/usr/local/openssl-1.0.2/lib"
         export CPPFLAGS="-I/usr/local/openssl-1.0.2/include"
         export LD_LIBRARY_PATH="/usr/local/openssl-1.0.2/lib:$LD_LIBRARY_PATH"
-        export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
         ./configure --with-openssl=/usr/local/openssl-1.0.2 --without-qt4 --without-qt5 --without-c_glib --without-csharp --without-java --without-erlang --without-nodejs --without-lua --without-python --without-perl --without-php --without-php_extension --without-ruby --without-haskell --without-go --without-haxe --without-d --enable-tests=no --enable-tutorial=no
         make -j
         sudo checkinstall --pkgname=thrift-0.10.0 --pkgversion=0.10.0 --backup=no --deldoc=yes --fstrans=no --default
@@ -95,9 +95,6 @@ automatically for you.
         export LDFLAGS="-L/usr/local/openssl-1.0.2/lib"
         export CPPFLAGS="-I/usr/local/openssl-1.0.2/include"
         export LD_LIBRARY_PATH="/usr/local/openssl-1.0.2/lib:$LD_LIBRARY_PATH"
-        export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-        export LDFLAGS="-L/usr/local/lib"
-        export CPPFLAGS="-I/usr/local/include"
         ./bootstrap.sh
 
 NB: you don't have to install IndexFS into your system. Our scripts
@@ -123,14 +120,8 @@ So everything is in one box.
 
         sbin/tree-test.sh
 
-* **To mount IndexFS clients and run mdtest**
-
-        sbin/mount-fuse.sh
-        ../ior/src/mdtest -d /tmp/indexfs/fuse-mnt/mdtest -n 1000
-
 * **To stop IndexFS server**
 
-        sudo umount /tmp/indexfs/fuse-mnt
         sbin/stop-idxfs.sh
 
 In the above scripts, IndexFS server will be started as a daemon
@@ -149,16 +140,37 @@ Assuming you have completed the interoperability of the machines, for example us
 
 * **Deploy indexfs to a folder with the same path on each machine according to the above process**
 
-* **Change IP at etc/indexfs-distributed/server_list**: Change to the IP addresses of each machine, with one line for each machine. The port number written here is meaningless, and the port number written in the etc/indexfs-standalone/server_list file is used for startup.
+* **Change IP at etc/indexfs-distributed/server_list**: Change to the IP addresses of each machine, with one line for each machine.
+
+* **Configure/tmp/indexfs as a shared directory on multiple machines**: The configured directory is the same as in etc/indexfs-distributed/indexfs_conf, defaulting to /tmp/indexfs. Using nfs as an example, configure node0(10.10.1.1) and node1(10.10.1.2)
+
+        # node0
+        sudo apt install -y nfs-kernel-server nfs-common
+        mkdir /tmp/indexfs
+        sudo chown nobody:nogroup /tmp/indexfs
+        sudo chmod 777 /tmp/indexfs
+        echo "/tmp/indexfs 10.10.1.1/24(rw,sync,no_subtree_check)" | sudo tee -a /etc/exports
+        sudo exportfs -a
+        sudo systemctl start nfs-kernel-server
+        sudo systemctl enable nfs-kernel-server
+
+        # node1
+        sudo apt install -y nfs-kernel-server nfs-common
+        mkdir /tmp/indexfs
+        sudo mount 10.10.1.1:/tmp/indexfs /tmp/indexfs
 
 * **To start IndexFS server**
 
         sbin/start-all.sh
 
-* **To run mdtest**
+* **To run mdtest**: Directories and files need to be tested separately, otherwise errors will be reported. There was an error reading the test files, skipping with -C -T -r, they have not been renamed yet.
 
-        ssh 10.10.1.2 "mpirun -np 10 /users/penglb3/sdb/ior/src/mdtest -d /tmp/indexfs/fuse-mnt/mdtest -n 1000"
-        ssh 10.10.1.3 "mpirun -np 10 /users/penglb3/sdb/ior/src/mdtest -d /tmp/indexfs/fuse-mnt/mdtest -n 1000"
+        # Directory
+        mpirun --host node0:64,node1:64 -x LDFLAGS="-L/usr/local/openssl-1.0.2/lib" -x CPPFLAGS="-I/usr/local/openssl-1.0.2/include" -x LD_LIBRARY_PATH="/usr/local/openssl-1.0.2/lib:$LD_LIBRARY_PATH" -x IDXFS_CONFIG_FILE=/users/penglb3/indexfs-0.3/etc/indexfs-distributed/indexfs_conf -x IDXFS_SERVER_LIST=/users/penglb3/indexfs-0.3/etc/indexfs-distributed/server_list /users/penglb3/indexfs-0.3/build/md_test/mdtest_nobk -n 10000 -d / -D
+        
+        # File
+        mpirun --host node0:64,node1:64 -x LDFLAGS="-L/usr/local/openssl-1.0.2/lib" -x CPPFLAGS="-I/usr/local/openssl-1.0.2/include" -x LD_LIBRARY_PATH="/usr/local/openssl-1.0.2/lib:$LD_LIBRARY_PATH" -x IDXFS_CONFIG_FILE=/users/penglb3/indexfs-0.3/etc/indexfs-distributed/indexfs_conf -x IDXFS_SERVER_LIST=/users/penglb3/indexfs-0.3/etc/indexfs-distributed/server_list /users/penglb3/indexfs-0.3/build/md_test/mdtest_nobk -n 10000 -d / -F -C -T -r
+
 
 * **To stop IndexFS server**
 
