@@ -41,9 +41,9 @@ provides gflags, glog, and thrift source packages along with its src
 code. System administrators may directly use these packages to build
 and install these required IndexFS dependencies.
 
-#### STEP-BY-STEP INSTRUCTIONS
+## STEP-BY-STEP INSTRUCTIONS
 
-##### INSTALL SYSTEM PACKAGES
+### INSTALL SYSTEM PACKAGES
 
         sudo apt-get install -y gcc g++ make flex bison
         sudo apt-get install -y autoconf automake libtool pkg-config
@@ -51,7 +51,7 @@ and install these required IndexFS dependencies.
         sudo apt-get install -y libboost-all-dev libevent-dev libssl-dev
         sudo apt-get install -y pdsh libfuse-dev libopenmpi-dev
 
-##### Build & Install Depends
+### Build & Install Depends
 
 
 * **Install gflags and glog**:
@@ -82,7 +82,7 @@ and install these required IndexFS dependencies.
 
 -------------------------
 
-##### Build IndexFS
+### Build IndexFS
 
 IndexFS also follows GNU standard building process. For your
 convenience, IndexFS provides `bootstrap.sh` which does this
@@ -141,7 +141,7 @@ INDEXFS IN DISTRIBUTED MODE
 
 Assuming you have completed the interconnection of the machines, for example use noded0(10.10.1.1) and node1(10.10.1.2).
 
-* **Deploy indexfs mds on one machine and run the client on other machines**: You can also deploy indexfs mds to each machine by modifying server_list and configuring the indexfs environment in the same directory on each machine.
+* **Deploy indexfs mds on one machine and run the client on other machines**: You need to deploy indexfs on one machine and complete INSTALL SYSTEM PACKAGES and Build&Install Depends on other machines. You can also deploy indexfs mds to each machine by modifying server_list and configuring the indexfs environment in the same directory on each machine. You need to complete INSTALL SYSTEM PACKAGES, Build&Install Depends and Build IndexFS on the same directory for each machine
 
 * **Change IP and configure**: Change IP and port at etc/indexfs-distributed/server_list. Change configure at etc/indexfs-distributed/indexfs_conf. If you deploy indexfs on multiple machines, the configuration file of each machine needs to be modified.
 
