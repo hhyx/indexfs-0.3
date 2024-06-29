@@ -351,6 +351,10 @@ int IDX_Mkdir(const char *path, mode_t mode) {
   return 0; // No directories will be created
 }
 
+int IDX_Rename(const char *oldpath, const char *newpath) {
+  return 0;
+}
+
 int IDX_Unlink(const char *path) {
   const char* name = strrchr(path, '/') + 1;
   size_t name_len = strlen(name);

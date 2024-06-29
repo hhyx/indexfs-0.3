@@ -156,7 +156,9 @@ Status Config::LoadServerList(const std::string &file_name) {
           file_name);
     }
   }
-  if (srv_id_ >= srv_addrs_.size()) {
+  int diff = (srv_id_ - srv_addrs_.size());
+  if (diff >= 0) {
+  // if (srv_id_ >= srv_addrs_.size()) {
     return Status::Corruption("Illegal server ID", "" + srv_id_);
   }
   std::vector<std::pair<std::string, int> >::iterator it = srv_addrs_.begin();

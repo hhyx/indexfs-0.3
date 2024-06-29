@@ -93,6 +93,13 @@ int IDX_Mkdir(const char *path, mode_t mode) {
   return LogErrorAndReturn(s);
 }
 
+int IDX_Rename(const char *oldpath, const char *newpath) {
+  std::string old_p = oldpath;
+  std::string new_p = newpath;
+  Status s = client->Rename(old_p, new_p);
+  return LogErrorAndReturn(s);
+}
+
 int IDX_Unlink(const char *path) {
   std::string p = path;
   Status s = client->Remove(p);

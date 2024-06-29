@@ -49,6 +49,8 @@ extern int IDX_Mknod(const char *path, mode_t mode);
 //
 extern int IDX_Mkdir(const char *path, mode_t mode);
 
+extern int IDX_Rename(const char *oldpath, const char *newpath);
+
 // Create a file at the give path.
 // Create parent directories if necessary.
 //

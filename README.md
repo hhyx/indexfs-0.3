@@ -95,6 +95,9 @@ automatically for you.
         export LDFLAGS="-L/usr/local/openssl-1.0.2/lib"
         export CPPFLAGS="-I/usr/local/openssl-1.0.2/include"
         export LD_LIBRARY_PATH="/usr/local/openssl-1.0.2/lib:$LD_LIBRARY_PATH"
+        export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+        export LDFLAGS="-L/usr/local/lib"
+        export CPPFLAGS="-I/usr/local/include"
         ./bootstrap.sh
 
 NB: you don't have to install IndexFS into your system. Our scripts
@@ -136,15 +139,15 @@ directory. This test is expected to conclude in less than 1 second.
 INDEXFS IN DISTRIBUTED MODE
 --------------------------
 
-Assuming you have completed the interoperability of the machines, for example use 10.10.1.3 and 10.10.1.2.
+Assuming you have completed the interconnection of the machines, for example use noded0(10.10.1.1) and node1(10.10.1.2).
 
-* **Deploy indexfs to a folder with the same path on each machine according to the above process**
+* **Deploy indexfs mds on one machine and run the client on other machines**: You can also deploy indexfs mds to each machine by modifying server_list and configuring the indexfs environment in the same directory on each machine.
 
-* **Change IP at etc/indexfs-distributed/server_list**: Change to the IP addresses of each machine, with one line for each machine.
+* **Change IP and configure**: Change IP and port at etc/indexfs-distributed/server_list. Change configure at etc/indexfs-distributed/indexfs_conf. If you deploy indexfs on multiple machines, the configuration file of each machine needs to be modified.
 
-* **Configure/tmp/indexfs as a shared directory on multiple machines**: The configured directory is the same as in etc/indexfs-distributed/indexfs_conf, defaulting to /tmp/indexfs. Using nfs as an example, configure node0(10.10.1.1) and node1(10.10.1.2)
+* **Configure shared directories for multiple machines based on indexfs_conf**: The default directory is/tmp/indexfs. Using nfs as an example, configure node0 and node1
 
-        # node0
+        # at node0
         sudo apt install -y nfs-kernel-server nfs-common
         mkdir /tmp/indexfs
         sudo chown nobody:nogroup /tmp/indexfs
@@ -154,23 +157,17 @@ Assuming you have completed the interoperability of the machines, for example us
         sudo systemctl start nfs-kernel-server
         sudo systemctl enable nfs-kernel-server
 
-        # node1
-        sudo apt install -y nfs-kernel-server nfs-common
-        mkdir /tmp/indexfs
-        sudo mount 10.10.1.1:/tmp/indexfs /tmp/indexfs
+        ssh node1 'sudo apt install -y nfs-kernel-server nfs-common'
+        ssh node1 'mkdir /tmp/indexfs'
+        ssh node1 'sudo mount 10.10.1.1:/tmp/indexfs /tmp/indexfs'
 
 * **To start IndexFS server**
 
         sbin/start-all.sh
 
-* **To run mdtest**: Directories and files need to be tested separately, otherwise errors will be reported. There was an error reading the test files, skipping with -C -T -r, they have not been renamed yet.
+* **To run mdtest**: Reading test file not implemented, skipping with -C -T -r.
 
-        # Directory
-        mpirun --host node0:64,node1:64 -x LDFLAGS="-L/usr/local/openssl-1.0.2/lib" -x CPPFLAGS="-I/usr/local/openssl-1.0.2/include" -x LD_LIBRARY_PATH="/usr/local/openssl-1.0.2/lib:$LD_LIBRARY_PATH" -x IDXFS_CONFIG_FILE=/users/penglb3/indexfs-0.3/etc/indexfs-distributed/indexfs_conf -x IDXFS_SERVER_LIST=/users/penglb3/indexfs-0.3/etc/indexfs-distributed/server_list /users/penglb3/indexfs-0.3/build/md_test/mdtest_nobk -n 10000 -d / -D
-        
-        # File
-        mpirun --host node0:64,node1:64 -x LDFLAGS="-L/usr/local/openssl-1.0.2/lib" -x CPPFLAGS="-I/usr/local/openssl-1.0.2/include" -x LD_LIBRARY_PATH="/usr/local/openssl-1.0.2/lib:$LD_LIBRARY_PATH" -x IDXFS_CONFIG_FILE=/users/penglb3/indexfs-0.3/etc/indexfs-distributed/indexfs_conf -x IDXFS_SERVER_LIST=/users/penglb3/indexfs-0.3/etc/indexfs-distributed/server_list /users/penglb3/indexfs-0.3/build/md_test/mdtest_nobk -n 10000 -d / -F -C -T -r
-
+        mpirun --host node1:16 -x LDFLAGS="-L/usr/local/openssl-1.0.2/lib" -x CPPFLAGS="-I/usr/local/openssl-1.0.2/include" -x LD_LIBRARY_PATH="/usr/local/openssl-1.0.2/lib:$LD_LIBRARY_PATH" -x IDXFS_CONFIG_FILE=/tmp/indexfs/conf/indexfs_conf -x IDXFS_SERVER_LIST=/tmp/indexfs/conf/server_list /tmp/indexfs/conf/mdtest_nobk -n 1000 -d / -C -T -r
 
 * **To stop IndexFS server**
 

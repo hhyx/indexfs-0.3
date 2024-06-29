@@ -149,6 +149,10 @@ int IDX_Mkdir(const char *path, mode_t mode) {
   return LogErrorWithPathAndReturn(s, "mkdir", path);
 }
 
+int IDX_Rename(const char *oldpath, const char *newpath) {
+  return 0;
+}
+
 int IDX_Unlink(const char *path) {
   std::string p = path;
   Client* client = (Client*) pthread_getspecific(cli_key);

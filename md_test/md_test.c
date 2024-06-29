@@ -110,6 +110,7 @@ int barriers = 1;
 int create_only = 0;
 int stat_only = 0;
 int read_only = 0;
+int rename_dirs = 1;
 int remove_only = 0;
 int leaf_only = 0;
 int branch_factor = 1;
@@ -319,6 +320,57 @@ void unique_dir_access(int opt, char *to) {
   } else if (opt == RM_UNI_DIR) {
     strcpy( to, unique_rm_uni_dir );
   }
+}
+
+void rename_items_helper(char* path) {
+  unsigned long long i;
+  char curr_item[MAX_LEN];
+  char new_item[MAX_LEN];
+
+  if (( rank == 0 ) && ( verbose >= 1 )) {
+    fprintf( stdout, "V-1: Entering rename_items_helper...\n" );
+    fflush( stdout );
+  }
+
+  sprintf(curr_item, "%s/dir.%s%llu", path, mk_name, 0);
+  sprintf(new_item, "%s/dir.%s%llu-x", path, mk_name, 0);
+#if defined(_HAS_IDXFS)
+    if (IDX_Rename(curr_item, new_item) != 0) {
+      FAIL("unable to idxfs_rename directory");
+    }
+#endif
+
+  for (i=1; i<items_per_dir; i++) {
+    if (( rank == 0 )                                         &&
+        ( verbose >= 3 )                                      &&
+        ((i) % ITEM_COUNT==0 && (i != 0))) {
+
+      printf("V-3: rename dir: %llu\n", i);
+      fflush(stdout);
+    }
+
+    //rename dirs
+    sprintf(curr_item, "%s/dir.%s%llu", path, mk_name, i);
+    sprintf(new_item, "%s/dir.%s%llu", path, mk_name, i-1);
+    if (rank == 0 && verbose >= 3) {
+      printf("V-3: rename_items_helper (dirs rename): curr_item is \"%s\"\n", curr_item);
+      fflush(stdout);
+    }
+
+#if defined(_HAS_IDXFS)
+    if (IDX_Rename(curr_item, new_item) != 0) {
+      FAIL("unable to idxfs_rename directory");
+    }
+#endif
+  }
+
+  sprintf(curr_item, "%s/dir.%s%llu-x", path, mk_name, 0);
+  sprintf(new_item, "%s/dir.%s%llu", path, mk_name, items_per_dir-1);
+#if defined(_HAS_IDXFS)
+  if (IDX_Rename(curr_item, new_item) != 0) {
+    FAIL("unable to idxfs_rename directory");
+  }
+#endif
 }
 
 /* helper for creating/removing items */
@@ -1494,11 +1546,10 @@ void directory_test(int iteration, int ntasks, char *path) {
     double t[5] = {0};
     char temp_path[MAX_LEN];
 
-
-  if (( rank == 0 ) && ( verbose >= 1 )) {
-    fprintf( stdout, "V-1: Entering directory_test...\n" );
-    fflush( stdout );
-  }
+    if (( rank == 0 ) && ( verbose >= 1 )) {
+      fprintf( stdout, "V-1: Entering directory_test...\n" );
+      fflush( stdout );
+    }
 
     MPI_Barrier(testcomm);
     t[0] = MPI_Wtime();
@@ -1525,7 +1576,7 @@ void directory_test(int iteration, int ntasks, char *path) {
                 collective_create_remove(1, 1, ntasks, temp_path);
             }
         } else {
-			/* create directories */
+			  /* create directories */
         	create_remove_items(0, 1, 1, 0, temp_path, 0);
         }
     }
@@ -1552,7 +1603,7 @@ void directory_test(int iteration, int ntasks, char *path) {
           fflush( stdout );
         }
         
-		/* stat directories */
+		    /* stat directories */
 		    if (random_seed > 0) {
 	        mdtest_stat(1, 1, temp_path);
         } else {
@@ -1567,8 +1618,31 @@ void directory_test(int iteration, int ntasks, char *path) {
     t[2] = MPI_Wtime();
 
     /* read phase */
-    if (read_only) {
+    // if (read_only) {
         
+    //     if (unique_dir_per_task) {
+    //         unique_dir_access(READ_SUB_DIR, temp_path);
+    //         if (!time_unique_dir_overhead) {
+    //             offset_timers(t, 2);
+    //         }
+    //     } else {
+    //       strcpy( temp_path, path );
+    //     }
+        
+    //     if (verbose >= 3 && rank == 0) {
+    //       printf( "V-3: directory_test: read path is \"%s\"\n", temp_path );
+    //       fflush( stdout );
+    //     }
+        
+		//     /* read directories */
+	  //   	if (random_seed > 0) {
+	  //       ;	/* N/A */
+    //     } else {	
+	  //       ;	/* N/A */
+    //     }
+    // }
+
+    if (rename_dirs) {
         if (unique_dir_per_task) {
             unique_dir_access(READ_SUB_DIR, temp_path);
             if (!time_unique_dir_overhead) {
@@ -1579,17 +1653,11 @@ void directory_test(int iteration, int ntasks, char *path) {
         }
         
         if (verbose >= 3 && rank == 0) {
-          printf( "V-3: directory_test: read path is \"%s\"\n", temp_path );
+          printf( "V-3: directory_rename: rename path is \"%s\"\n", temp_path );
           fflush( stdout );
         }
-        
-		/* read directories */
-	    	if (random_seed > 0) {
-	        ;	/* N/A */
-        } else {	
-	        ;	/* N/A */
-        }
 
+        rename_items_helper(temp_path);
     }
     
     if (barriers) {
@@ -1657,7 +1725,7 @@ void directory_test(int iteration, int ntasks, char *path) {
     } else {
         summary_table[iteration].entry[1] = 0;
     }
-    if (read_only) {
+    if (rename_dirs) {
         summary_table[iteration].entry[2] = items*size/(t[3] - t[2]);
     } else {
         summary_table[iteration].entry[2] = 0;
@@ -1673,10 +1741,8 @@ void directory_test(int iteration, int ntasks, char *path) {
               t[1] - t[0], summary_table[iteration].entry[0]);
         printf("V-1:   Directory stat    : %14.3f sec, %14.3f ops/sec\n",
               t[2] - t[1], summary_table[iteration].entry[1]);
-/* N/A
-        printf("V-1:   Directory read    : %14.3f sec, %14.3f ops/sec\n",
+        printf("V-1:   Directory rename  : %14.3f sec, %14.3f ops/sec\n",
               t[3] - t[2], summary_table[iteration].entry[2]);
-*/
         printf("V-1:   Directory removal : %14.3f sec, %14.3f ops/sec\n",
               t[4] - t[3], summary_table[iteration].entry[3]);
         fflush(stdout);
@@ -2017,8 +2083,7 @@ void summarize_results(int iterations) {
                 switch (i) {
                     case 0: strcpy(access, "Directory creation:"); break;
                     case 1: strcpy(access, "Directory stat    :"); break;
-                    /* case 2: strcpy(access, "Directory read    :"); break; */
-                    case 2: ;                                      break; /* N/A */
+                    case 2: strcpy(access, "Directory rename  :"); break;
                     case 3: strcpy(access, "Directory removal :"); break;
                     case 4: strcpy(access, "File creation     :"); break;
                     case 5: strcpy(access, "File stat         :"); break;
@@ -2026,14 +2091,12 @@ void summarize_results(int iterations) {
                     case 7: strcpy(access, "File removal      :"); break;
                    default: strcpy(access, "ERR");                 break;
                 }
-                if (i != 2) {
-                    printf("   %s ", access);
-                    printf("%14.3f ", max);
-                    printf("%14.3f ", min);
-                    printf("%14.3f ", mean);
-                    printf("%14.3f\n", sd);
-                    fflush(stdout);
-                }
+                printf("   %s ", access);
+                printf("%14.3f ", max);
+                printf("%14.3f ", min);
+                printf("%14.3f ", mean);
+                printf("%14.3f\n", sd);
+                fflush(stdout);
                 sum = var = 0;
                 
             }
@@ -2066,8 +2129,7 @@ void summarize_results(int iterations) {
                 switch (i) {
                     case 0: strcpy(access, "Directory creation:"); break;
                     case 1: strcpy(access, "Directory stat    :"); break;
-                    /* case 2: strcpy(access, "Directory read    :"); break; */
-                    case 2: ;                                      break; /* N/A */
+                    case 2: strcpy(access, "Directory rename  :"); break;
                     case 3: strcpy(access, "Directory removal :"); break;
                     case 4: strcpy(access, "File creation     :"); break;
                     case 5: strcpy(access, "File stat         :"); break;
@@ -2075,14 +2137,12 @@ void summarize_results(int iterations) {
                     case 7: strcpy(access, "File removal      :"); break;
                    default: strcpy(access, "ERR");                 break;
                 }
-                if (i != 2) {
-                    printf("   %s ", access);
-                    printf("%14.3f ", max);
-                    printf("%14.3f ", min);
-                    printf("%14.3f ", mean);
-                    printf("%14.3f\n", sd);
-                    fflush(stdout);
-                }
+                printf("   %s ", access);
+                printf("%14.3f ", max);
+                printf("%14.3f ", min);
+                printf("%14.3f ", mean);
+                printf("%14.3f\n", sd);
+                fflush(stdout);
                 sum = var = 0;
                 
             }
