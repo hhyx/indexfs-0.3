@@ -1,0 +1,206 @@
+
+-- started at 06/30/2024 05:38:21 --
+
+mdtest-1.9.3 was launched with 512 total task(s) on 8 node(s)
+Command line used: /users/penglb3/indexfs_conf/mdtest_nobk -n 5000 -d / -C -T -r -u -D
+
+512 tasks, 2560000 directories
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   Directory creation:      91432.214      91432.214      91432.214          0.000
+   Directory stat    :     821378.214     821378.214     821378.214          0.000
+   Directory rename  :     135190.329     135190.329     135190.329          0.000
+   Directory removal :     372467.230     372467.230     372467.230          0.000
+   Tree creation     :          6.087          6.087          6.087          0.000
+   Tree removal      :          1.690          1.690          1.690          0.000
+
+-- finished at 06/30/2024 05:39:19 --
+
+-- started at 06/30/2024 03:43:15 --
+
+mdtest-1.9.3 was launched with 512 total task(s) on 8 node(s)
+Command line used: /users/penglb3/indexfs_conf/mdtest_nobk -n 10000 -d / -C -T -r -u -F
+
+512 tasks, 5120000 files
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   File creation     :     221361.440     221361.440     221361.440          0.000
+   File stat         :     783304.613     783304.613     783304.613          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :     564679.314     564679.314     564679.314          0.000
+   Tree creation     :          6.230          6.230          6.230          0.000
+   Tree removal      :          1.748          1.748          1.748          0.000
+
+-- finished at 06/30/2024 03:43:55 --
+
+-- started at 06/30/2024 04:05:43 --
+
+mdtest-1.9.3 was launched with 256 total task(s) on 8 node(s)
+Command line used: /users/penglb3/indexfs_conf/mdtest_nobk -n 10000 -d / -C -T -r -u -D
+
+256 tasks, 2560000 directories
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   Directory creation:      88086.329      88086.329      88086.329          0.000
+   Directory stat    :     742598.473     742598.473     742598.473          0.000
+   Directory rename  :     108534.465     108534.465     108534.465          0.000
+   Directory removal :     267885.640     267885.640     267885.640          0.000
+   Tree creation     :         12.154         12.154         12.154          0.000
+   Tree removal      :          1.672          1.672          1.672          0.000
+
+-- finished at 06/30/2024 04:06:50 --
+
+-- started at 06/30/2024 00:36:04 --
+
+mdtest-1.9.3 was launched with 256 total task(s) on 8 node(s)
+Command line used: /users/penglb3/indexfs_conf/mdtest_nobk -n 100000 -d / -C -T -r -u -F
+
+256 tasks, 25600000 files
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   File creation     :     201440.068     201440.068     201440.068          0.000
+   File stat         :     662375.004     662375.004     662375.004          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :     521882.486     521882.486     521882.486          0.000
+   Tree creation     :         12.606         12.606         12.606          0.000
+   Tree removal      :          1.054          1.054          1.054          0.000
+
+-- finished at 06/30/2024 00:39:40 --
+
+-- started at 06/30/2024 03:40:20 --
+
+mdtest-1.9.3 was launched with 128 total task(s) on 8 node(s)
+Command line used: /users/penglb3/indexfs_conf/mdtest_nobk -n 10000 -d / -C -T -r -u -D
+
+128 tasks, 1280000 directories
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   Directory creation:      53449.239      53449.239      53449.239          0.000
+   Directory stat    :     629732.096     629732.096     629732.096          0.000
+   Directory rename  :      60543.517      60543.517      60543.517          0.000
+   Directory removal :     104527.593     104527.593     104527.593          0.000
+   Tree creation     :         31.001         31.001         31.001          0.000
+   Tree removal      :          1.020          1.020          1.020          0.000
+
+-- finished at 06/30/2024 03:41:21 --
+
+-- started at 06/30/2024 00:27:13 --
+
+mdtest-1.9.3 was launched with 128 total task(s) on 8 node(s)
+Command line used: /users/penglb3/indexfs_conf/mdtest_nobk -n 100000 -d / -C -T -r -u -F
+
+128 tasks, 12800000 files
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   File creation     :     154846.941     154846.941     154846.941          0.000
+   File stat         :     601069.631     601069.631     601069.631          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :     510467.436     510467.436     510467.436          0.000
+   Tree creation     :         29.442         29.442         29.442          0.000
+   Tree removal      :          1.072          1.072          1.072          0.000
+
+-- finished at 06/30/2024 00:29:23 --
+
+-- started at 06/29/2024 23:58:02 --
+
+mdtest-1.9.3 was launched with 64 total task(s) on 8 node(s)
+Command line used: /users/penglb3/indexfs_conf/mdtest_nobk -n 100000 -d / -C -T -r -u
+
+64 tasks, 6400000 files/directories
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   Directory creation:      60649.140      60649.140      60649.140          0.000
+   Directory stat    :     495892.760     495892.760     495892.760          0.000
+   Directory rename  :     115908.228     115908.228     115908.228          0.000
+   Directory removal :     419230.815     419230.815     419230.815          0.000
+   File creation     :     178930.853     178930.853     178930.853          0.000
+   File stat         :     501509.760     501509.760     501509.760          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :     432785.331     432785.331     432785.331          0.000
+   Tree creation     :         46.473         46.473         46.473          0.000
+   Tree removal      :          1.427          1.427          1.427          0.000
+
+-- finished at 06/30/2024 00:02:15 --
+
+-- started at 06/29/2024 23:38:52 --
+
+mdtest-1.9.3 was launched with 32 total task(s) on 8 node(s)
+Command line used: /users/penglb3/indexfs_conf/mdtest_nobk -n 100000 -d / -C -T -r -u
+
+32 tasks, 3200000 files/directories
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   Directory creation:      26717.785      26717.785      26717.785          0.000
+   Directory stat    :     341371.123     341371.123     341371.123          0.000
+   Directory rename  :      87069.048      87069.048      87069.048          0.000
+   Directory removal :     320359.403     320359.403     320359.403          0.000
+   File creation     :     122949.913     122949.913     122949.913          0.000
+   File stat         :     345483.987     345483.987     345483.987          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :     319446.304     319446.304     319446.304          0.000
+   Tree creation     :         86.951         86.951         86.951          0.000
+   Tree removal      :          1.006          1.006          1.006          0.000
+
+-- finished at 06/29/2024 23:42:34 --
+
+-- started at 06/29/2024 23:21:15 --
+
+mdtest-1.9.3 was launched with 16 total task(s) on 8 node(s)
+Command line used: /users/penglb3/indexfs_conf/mdtest_nobk -n 100000 -d / -C -T -r -u
+
+16 tasks, 1600000 files/directories
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   Directory creation:       9039.700       9039.700       9039.700          0.000
+   Directory stat    :     150512.332     150512.332     150512.332          0.000
+   Directory rename  :      19759.362      19759.362      19759.362          0.000
+   Directory removal :     133476.043     133476.043     133476.043          0.000
+   File creation     :      54611.239      54611.239      54611.239          0.000
+   File stat         :     141054.412     141054.412     141054.412          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :     133283.093     133283.093     133283.093          0.000
+   Tree creation     :        160.778        160.778        160.778          0.000
+   Tree removal      :          1.220          1.220          1.220          0.000
+
+-- finished at 06/29/2024 23:26:49 --
+
+-- started at 06/29/2024 23:10:06 --
+
+mdtest-1.9.3 was launched with 8 total task(s) on 4 node(s)
+Command line used: /users/penglb3/indexfs_conf/mdtest_nobk -n 100000 -d / -C -T -r -u
+
+8 tasks, 800000 files/directories
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   Directory creation:      25620.990      25620.990      25620.990          0.000
+   Directory stat    :     105875.063     105875.063     105875.063          0.000
+   Directory rename  :      27067.909      27067.909      27067.909          0.000
+   Directory removal :      97219.118      97219.118      97219.118          0.000
+   File creation     :      35717.871      35717.871      35717.871          0.000
+   File stat         :     102084.708     102084.708     102084.708          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :      94205.331      94205.331      94205.331          0.000
+   Tree creation     :        248.082        248.082        248.082          0.000
+   Tree removal      :          1.304          1.304          1.304          0.000
+
+-- finished at 06/29/2024 23:12:03 --
