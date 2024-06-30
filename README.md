@@ -95,7 +95,7 @@ automatically for you.
         export LDFLAGS="-L/usr/local/openssl-1.0.2/lib"
         export CPPFLAGS="-I/usr/local/openssl-1.0.2/include"
         export LD_LIBRARY_PATH="/usr/local/openssl-1.0.2/lib:$LD_LIBRARY_PATH"
-        export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+        export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
         export LDFLAGS="-L/usr/local/lib"
         export CPPFLAGS="-I/usr/local/include"
         ./bootstrap.sh
